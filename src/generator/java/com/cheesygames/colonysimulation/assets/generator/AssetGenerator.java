@@ -1,9 +1,9 @@
 package com.cheesygames.colonysimulation.assets.generator;
 
-import com.cheesygames.colonysimulation.assets.AssetType;
-import com.cheesygames.colonysimulation.assets.IAsset;
+import com.cheesygames.colonysimulation.GameGlobal;
+import com.cheesygames.colonysimulation.asset.AssetType;
+import com.cheesygames.colonysimulation.asset.IAsset;
 import com.jme3.asset.AssetKey;
-import com.jme3.asset.AssetManager;
 import com.squareup.javapoet.*;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -17,8 +17,8 @@ import java.util.regex.Pattern;
 
 /**
  * The Asset Generator creates an enum that contains IDs for all correctly placed and supported assets. For an asset to be correctly placed, its extension must correspond to one of
- * its parent directory as described in the {@link AssetType AssetType} enum. The specified parent directory must have the same name
- * (capitalization doesn't matter) as one of the enum value.
+ * its parent directory as described in the {@link AssetType AssetType} enum. The specified parent directory must have the same name (capitalization doesn't matter) as one of the
+ * enum value.
  */
 public final class AssetGenerator implements IGenerator {
 
@@ -54,7 +54,6 @@ public final class AssetGenerator implements IGenerator {
 
         builder.addJavadoc(GeneratorTypeJavadocFactory.createJavadoc(AssetGenerator.class, JAVADOC));
         builder.addSuperinterface(IAsset.class);
-        addAssetManager(builder);
         addConstructor(builder);
         addAssetTypeVar(builder);
         addPathVar(builder);
@@ -65,15 +64,6 @@ public final class AssetGenerator implements IGenerator {
         fillEnumConstants(assets, builder);
 
         return builder.build();
-    }
-
-    /**
-     * Adds the assetManager public static variable.
-     *
-     * @param builder The enum's type specification builder.
-     */
-    private void addAssetManager(TypeSpec.Builder builder) {
-        builder.addField(AssetManager.class, ASSET_MANAGER_NAME, Modifier.PUBLIC, Modifier.STATIC);
     }
 
     /**
@@ -275,8 +265,9 @@ public final class AssetGenerator implements IGenerator {
                                     .addModifiers(Modifier.PUBLIC)
                                     .addTypeVariable(genericTypeName)
                                     .addComment("$L", EXPRESSION_SUPPRESS_WARNINGS_UNCHECKED_COMMENT)
-                                    .addStatement("return ($L) $L.$L($L())",
+                                    .addStatement("return ($L) $T.$L.$L($L())",
                                         GENERIC_TYPE,
+                                        GameGlobal.class,
                                         ASSET_MANAGER_NAME,
                                         ENUM_LOAD_ASSET_METHOD_NAME,
                                         MEMBER_VAR_GET + StringUtils.capitalize(ENUM_ASSET_KEY_VAR_NAME))

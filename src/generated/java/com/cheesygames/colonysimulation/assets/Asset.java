@@ -1,7 +1,9 @@
 package com.cheesygames.colonysimulation.assets;
 
+import com.cheesygames.colonysimulation.GameGlobal;
+import com.cheesygames.colonysimulation.asset.AssetType;
+import com.cheesygames.colonysimulation.asset.IAsset;
 import com.jme3.asset.AssetKey;
-import com.jme3.asset.AssetManager;
 import java.lang.Override;
 import java.lang.String;
 import java.lang.SuppressWarnings;
@@ -103,8 +105,6 @@ public enum Asset implements IAsset {
 
   atlas_palette_texture(AssetType.TEXTURE, "texture/world_colors/atlas_palette_texture.png", AssetHierarchy.TEXTURE);
 
-  public static AssetManager assetManager;
-
   private final AssetType m_assetType;
 
   private final String m_path;
@@ -143,6 +143,6 @@ public enum Asset implements IAsset {
 
   public <T> T loadAsset() {
     // noinspection unchecked
-    return (T) assetManager.loadAsset(getAssetKey());
+    return (T) GameGlobal.assetManager.loadAsset(getAssetKey());
   }
 }
