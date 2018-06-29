@@ -1,0 +1,8 @@
+Material Fresnel Outline : material_definition/fresnel_outline/fresnel_outline_material_definition.j3md {
+     MaterialParameters {
+        FresnelOutlineColor : 1.0 0.0 0.0 1.0
+        FresnelOutlineBias : 0.17
+        FresnelOutlineScale : 2.0
+        FresnelOutlinePower : 1.0
+     }
+}

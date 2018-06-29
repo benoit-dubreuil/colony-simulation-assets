@@ -1,0 +1,11 @@
+Material punchingbag : Common/MatDefs/Light/Lighting.j3md {
+     MaterialParameters {
+        UseMaterialColors : true
+        Shininess : 64.0
+        Ambient : 0.9607843 0.043137256 0.4117647 1.0
+        Diffuse : 0.9764706 0.46666667 0.67058825 1.0
+        Specular : 0.9882353 0.72156864 0.827451 1.0
+     }
+    AdditionalRenderState {
+    }
+}

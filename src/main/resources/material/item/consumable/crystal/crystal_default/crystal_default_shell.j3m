@@ -1,0 +1,10 @@
+Material crystal_default_shell : Common/MatDefs/Light/Lighting.j3md {
+     MaterialParameters {
+        Diffuse : 1.0 1.0 1.0 0.25
+        UseMaterialColors : true
+     }
+    AdditionalRenderState {
+      Blend Alpha
+      DepthTest On
+    }
+}

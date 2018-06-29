@@ -1,0 +1,106 @@
+// Do not remove this import, IntelliJ whines and sometimes break because the type SourceSet cannot be found
+import org.gradle.api.tasks.SourceSet
+
+sourceSets {
+    generator {
+        java {
+            srcDirs = ['src/generator/java']
+
+            compileClasspath += main.output
+            runtimeClasspath += main.output
+        }
+
+        resources {
+            srcDirs += main.resources.srcDirs
+        }
+
+        task(executeCodeGeneration, dependsOn: 'generatorClasses', type: JavaExec) {
+            main = 'com.cheesygames.colonysimulation.assets.generator.MainGenerator'
+            classpath = runtimeClasspath
+
+            final String windowsSlash = '\\'
+            final String windowsSlashRegex = '\\\\' // Only to stop the warning
+            final String unixSlash = '/'
+
+            List<String> assetDirPaths = sourceSets.main.resources.srcDirs.toList()*.getAbsolutePath();
+            List<File> assetFiles = sourceSets.main.resources.toList()
+
+            Iterator<File> assetFileIterator = assetFiles.iterator()
+            while (assetFileIterator.hasNext()) {
+                File assetFile = assetFileIterator.next()
+
+                if (assetFile.getName().startsWith('.')) {
+                    assetFileIterator.remove()
+                }
+            }
+
+            List<String> assetPaths = assetFiles*.getAbsolutePath()
+
+            for (String assetDir : assetDirPaths) {
+                assetPaths = assetPaths*.replace(assetDir, '')
+            }
+
+            assetPaths = assetPaths*.replaceFirst(windowsSlashRegex, '')
+            assetPaths = assetPaths*.replaceFirst(unixSlash, '')
+
+            args assetDirPaths + assetPaths
+        }
+    }
+
+    generated {
+        java {
+            srcDirs = ['src/generated/java']
+
+            compileClasspath += main.output
+            runtimeClasspath += main.output
+
+            generatedClasses.dependsOn executeCodeGeneration
+        }
+    }
+}
+
+generatorClasses.dependsOn classes
+generatedClasses.dependsOn classes
+
+javadoc {
+    classpath += sourceSets.generator.compileClasspath + sourceSets.generated.compileClasspath
+    source += sourceSets.generator.allJava + sourceSets.generated.allJava
+}
+
+configurations {
+    assetLibrary
+    generated
+
+    assetLibraryCompile.extendsFrom compile
+    assetLibraryRuntime.extendsFrom runtime
+
+    generatedCompile.extendsFrom compile
+    generatedRuntime.extendsFrom runtime
+
+    generatorCompile.extendsFrom compile
+    generatorRuntime.extendsFrom runtime
+}
+
+task generatedJar(type:Jar) {
+    from sourceSets.generated.output
+}
+
+task assetLibraryJar(type:Jar) {
+    from sourceSets.main.output, sourceSets.generated.output
+}
+
+artifacts {
+    assetLibrary assetLibraryJar
+    generated generatedJar
+}
+
+dependencies {
+    compile group: 'com.squareup', name: 'javapoet', version: '1.11.1'
+
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
+    compile group: 'commons-io', name: 'commons-io', version: '2.6'
+
+    compile group: 'com.badlogicgames.gdx', name: 'gdx', version: '1.9.8'
+    compile group: 'com.badlogicgames.gdx', name: 'gdx-ai', version: '1.8.1'
+}
+

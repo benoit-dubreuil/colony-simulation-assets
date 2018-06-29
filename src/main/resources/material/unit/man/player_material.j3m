@@ -1,0 +1,11 @@
+Material player : Common/MatDefs/Light/Lighting.j3md {
+     MaterialParameters {
+        UseMaterialColors : true
+        Shininess : 64.0
+        Ambient : 0.12156863 0.6431373 0.45882353 1.0
+        Diffuse : 0.44705883 0.99607843 0.8039216 1.0
+        Specular : 0.72156864 0.99607843 0.8980392 1.0
+     }
+    AdditionalRenderState {
+    }
+}

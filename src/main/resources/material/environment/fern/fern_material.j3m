@@ -1,0 +1,7 @@
+Material fern : Common/MatDefs/Light/Lighting.j3md {
+     MaterialParameters {
+     }
+    AdditionalRenderState {
+      FaceCull Off
+    }
+}

@@ -1,0 +1,59 @@
+import lookOutForEnemies:"com.chevreuilgames.retroflashyrpg.ai.behaviortree.behavior.lookoutforennemies.BehaviorLookOutForEnemies"
+import lookAtClosestSeenEnemy:"com.chevreuilgames.retroflashyrpg.ai.behaviortree.behavior.lookatclosestseenenemy.BehaviorLookAtClosestSeenEnemy"
+import resetLookAt:"com.chevreuilgames.retroflashyrpg.ai.behaviortree.behavior.BehaviorResetLookAt.BehaviorResetLookAt"
+import followClosestSeenEnemy:"com.chevreuilgames.retroflashyrpg.ai.behaviortree.behavior.followclosestseenenemy.BehaviorFollowClosestSeenEnemy"
+import attackClosestSeenEnemy:"com.chevreuilgames.retroflashyrpg.ai.behaviortree.behavior.attackclosestseenenemy.BehaviorAttackClosestSeenEnemy"
+import returnToInitialChasePosition:"com.chevreuilgames.retroflashyrpg.ai.behaviortree.behavior.movetoposition.returntoinitialchaseposition.BehaviorReturnToInitialChasePosition"
+import moveToFollowingEnemyLastPosition:"com.chevreuilgames.retroflashyrpg.ai.behaviortree.behavior.movetoposition.movetofollowingenemylastposition.BehaviorMoveToFollowingEnemyLastPosition"
+import playAnimation:"com.chevreuilgames.retroflashyrpg.ai.behaviortree.behavior.playanimation.BehaviorPlayAnimation"
+import stopAnimation:"com.chevreuilgames.retroflashyrpg.ai.behaviortree.behavior.stopanimation.BehaviorStopAnimation"
+
+import haveSpottedEnemies:"com.chevreuilgames.retroflashyrpg.ai.behaviortree.guard.GuardHaveSpottedEnemies"
+import isSpottedClosestEnemyAlive:"com.chevreuilgames.retroflashyrpg.ai.behaviortree.guard.GuardIsSpottedClosestEnemyAlive"
+import isReturningToInitialChasePosition:"com.chevreuilgames.retroflashyrpg.ai.behaviortree.guard.GuardIsReturningToInitialChasePosition"
+import isMovingToFollowingEnemyLastPosition:"com.chevreuilgames.retroflashyrpg.ai.behaviortree.guard.GuardIsMovingToFollowingEnemyLastPosition"
+import isPlayingAnimation:"com.chevreuilgames.retroflashyrpg.ai.behaviortree.guard.GuardIsPlayingAnimation"
+import knowFollowingEnemyLastPosition:"com.chevreuilgames.retroflashyrpg.ai.behaviortree.guard.GuardKnowFollowingEnemyLastPosition"
+import isFollowingEnemyAlive:"com.chevreuilgames.retroflashyrpg.ai.behaviortree.guard.GuardIsFollowingEnemyAlive"
+
+import printDebugInfo:"com.chevreuilgames.retroflashyrpg.ai.behaviortree.behavior.printdebuginfo.BehaviorPrintDebugInfo"
+
+subtree name:"notIsReturningToInitialChasePosition"
+    invert
+        isReturningToInitialChasePosition
+
+subtree name:"notIsMovingToFollowingEnemyLastPosition"
+    invert
+        isMovingToFollowingEnemyLastPosition
+
+subtree name:"notHaveSpottedEnemies"
+    invert
+        haveSpottedEnemies
+
+subtree name:"followEnemy"
+    selector
+        parallel
+            lookOutForEnemies
+            alwaysSucceed
+                lookAtClosestSeenEnemy
+            alwaysSucceed
+                (isPlayingAnimation animation:"look_around") stopAnimation animation:"look_around"
+            followClosestSeenEnemy
+            parallel policy:"selector"
+                alwaysFail
+                    wait seconds:10
+                attackClosestSeenEnemy
+
+root
+    selector
+        $followEnemy
+        (isFollowingEnemyAlive) (knowFollowingEnemyLastPosition) ($notHaveSpottedEnemies) sequence
+            resetLookAt
+            moveToFollowingEnemyLastPosition
+            parallel policy:"selector"
+                alwaysFail
+                    playAnimation animation:"look_around"
+                lookOutForEnemies
+        alwaysFail
+            resetLookAt
+        returnToInitialChasePosition

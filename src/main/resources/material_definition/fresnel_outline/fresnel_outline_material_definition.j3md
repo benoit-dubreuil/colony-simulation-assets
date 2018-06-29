@@ -1,0 +1,20 @@
+MaterialDef Fresnel Outline {
+
+    MaterialParameters {
+        Color FresnelOutlineColor
+        Float FresnelOutlineBias
+        Float FresnelOutlineScale
+        Float FresnelOutlinePower
+    }
+
+    Technique {
+        VertexShader GLSL100:   shader/vertex/fresnel_outline/fresnel_outline_vertex_shader.vert
+        FragmentShader GLSL100: shader/fragment/fresnel_outline/fresnel_outline_fragment_shader.frag
+
+        WorldParameters {
+            WorldViewProjectionMatrix
+            WorldMatrix
+            CameraPosition
+        }
+    }
+}
